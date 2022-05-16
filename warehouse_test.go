@@ -9,18 +9,42 @@ import (
 )
 
 // - sell a single CD to a customer and take payment
-func TestSellSingleCD(t *testing.T) {
+func TestSellSingleCDWhenStockIsGreaterThanZero(t *testing.T) {
 	is := is.New(t)
+
+	const (
+		startingCount      = 3
+		finalCount    uint = 2
+	)
 
 	// Arrange
 	whse := warehouse.New()
-	newID := whse.NewCD("S&M", "Metallica", "Vertigo Records", 14.99, 3)
-	startingCount := whse.QueryStockLevel(newID)
+	newID := whse.NewCD("S&M", "Metallica", "Vertigo Records", 14.99, startingCount)
 
 	// Act
-	whse.SellCD(newID)
+	err := whse.SellSingleCD(newID)
 
 	// Assert
-	finalCount := whse.QueryStockLevel(newID)
-	is.True(finalCount == startingCount-1)
+	is.NoErr(err) // Could not sell single CD
+	assertFinal := whse.QueryStockLevel(newID)
+	is.Equal(assertFinal, finalCount) // Stock level did not reduce
+}
+
+// - attempt to sell a CD that doesn't exist
+func TestSellCDThatDoesNotExist(t *testing.T) {
+	is := is.New(t)
+
+	const (
+		dummyID = "dummyID"
+	)
+
+	// Arrange
+	whse := warehouse.New()
+
+	// Act
+	err := whse.SellSingleCD(dummyID)
+
+	// Assert
+	is.True(err != nil)
+	is.Equal(err, warehouse.ErrCDNotFound)
 }

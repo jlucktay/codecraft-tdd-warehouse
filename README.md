@@ -18,6 +18,9 @@
 
 ## _... and make a Test List for each of them to drive your TDD_
 
+- sell a single CD to a customer and take payment ✅
+- attempt to sell a CD that doesn't exist ✅
+
 - create a definition of a CD inside our warehouse
   - includes GUID, price, title, artist, label, stock level
   - reviews field/sub-type
@@ -26,7 +29,6 @@
 - look up a CD by its title
 - look up a CD by its artist
 - look up a CD by both title and artist
-- sell a single CD to a customer and take payment
 - sell multiple copies of the same CD to a customer and take payment
 - sell multiple different CDs to a customer and take payment
 - sell a CD to a customer, take payment, and their review score
