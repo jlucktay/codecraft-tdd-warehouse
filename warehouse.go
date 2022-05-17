@@ -7,8 +7,8 @@ import "errors"
 type cdUID string
 
 type CD struct {
-	title, label string
-	i            stockedItem
+	artist, title, label string
+	i                    stockedItem
 }
 
 type stockedItem struct {
@@ -17,9 +17,9 @@ type stockedItem struct {
 }
 
 type WarehouseReceipt struct {
-	Title string
-	Price float64
-	Stock uint
+	Artist, Title string
+	Price         float64
+	Stock         uint
 }
 
 type Warehouse struct {
@@ -33,10 +33,11 @@ var (
 	ErrCDAlreadyInWarehouse = errors.New("a CD with this ID is already in the warehouse")
 )
 
-func NewCD(title, label string, price float64, stock uint) CD {
+func NewCD(artist, title, label string, price float64, stock uint) CD {
 	return CD{
-		title: title,
-		label: label,
+		artist: artist,
+		title:  title,
+		label:  label,
 		i: stockedItem{
 			price: price,
 			stock: stock,
@@ -54,6 +55,7 @@ func (c *CD) GetPrice() float64 {
 
 func New(c Chart) *Warehouse {
 	return &Warehouse{
+		c:     c,
 		p:     &dummyPayments{},
 		stock: make(map[cdUID]*CD, 0),
 	}
@@ -77,7 +79,7 @@ func (w *Warehouse) Add(cd CD) (cdUID, error) {
 
 func (w *Warehouse) BatchReceipt(label string, wr ...WarehouseReceipt) error {
 	for _, item := range wr {
-		cd := NewCD(item.Title, label, item.Price, item.Stock)
+		cd := NewCD(item.Artist, item.Title, label, item.Price, item.Stock)
 
 		_, err := w.Add(cd)
 		if err != nil {
@@ -101,6 +103,8 @@ func (w *Warehouse) SellCD(id cdUID, qty uint) error {
 	if err := w.p.Sell(selling.i.price * float64(qty)); err != nil {
 		return err
 	}
+
+	w.c.Notify(selling.artist, selling.title, qty)
 
 	selling.i.stock -= qty
 
