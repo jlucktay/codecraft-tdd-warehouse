@@ -34,3 +34,8 @@
   - includes GUID, price, title, artist, label, stock level
   - reviews field/sub-type
     - average score, optional body text
+
+## CD Warehouse++
+
+> When someone buys a CD, we need to notify the charts of the sale, telling them the artist and title of the CD bought, and how many copies were sold.
+> We offer a price guarantee for albums that are in the Top 100. We guarantee to beat the lowest competitor’s price by £1.
