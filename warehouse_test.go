@@ -84,3 +84,18 @@ func TestLookUpCDByTitle(t *testing.T) {
 	is.Equal(result.GetTitle(), "S&M") // Title of result does not match
 	is.Equal(result.GetPrice(), 14.99) // Price of result does not match
 }
+
+func TestLookUpCDByTitleIsNotFound(t *testing.T) {
+	// Arrange
+	is := is.New(t)
+	whse := warehouse.New()
+	newCD := warehouse.NewCD("S&M", "Vertigo Records", 14.99, 42)
+	_, err := whse.Add(newCD)
+	is.NoErr(err) // Could not add CD to warehouse
+
+	// Act
+	_, err = whse.FindCDByTitle("dummy-title")
+
+	// Assert
+	is.Equal(err, warehouse.ErrCDNotFound)
+}
