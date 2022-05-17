@@ -25,6 +25,7 @@ type WarehouseReceipt struct {
 type Warehouse struct {
 	p     paymentProvider
 	stock map[cdUID]*CD
+	c     Chart
 }
 
 var (
@@ -51,7 +52,7 @@ func (c *CD) GetPrice() float64 {
 	return c.i.price
 }
 
-func New() *Warehouse {
+func New(c Chart) *Warehouse {
 	return &Warehouse{
 		p:     &dummyPayments{},
 		stock: make(map[cdUID]*CD, 0),

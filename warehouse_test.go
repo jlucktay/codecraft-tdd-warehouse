@@ -18,7 +18,7 @@ func TestSellSingleCDWhenStockIsGreaterThanZero(t *testing.T) {
 	)
 
 	// Arrange
-	whse := warehouse.New()
+	whse := warehouse.New(nil)
 	newCD := warehouse.NewCD("S&M", "Vertigo Records", 14.99, startingCount)
 	newID, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add new CD to warehouse
@@ -41,7 +41,7 @@ func TestSellCDThatDoesNotExist(t *testing.T) {
 	)
 
 	// Arrange
-	whse := warehouse.New()
+	whse := warehouse.New(nil)
 
 	// Act
 	err := whse.SellSingleCD(dummyID)
@@ -54,7 +54,7 @@ func TestSellCDThatDoesNotExist(t *testing.T) {
 func TestBatchReceiptFromRecordLabel(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New()
+	whse := warehouse.New(nil)
 
 	// Act
 	err := whse.BatchReceipt("Vertigo Records",
@@ -67,11 +67,11 @@ func TestBatchReceiptFromRecordLabel(t *testing.T) {
 	is.NoErr(err)
 }
 
-// - look up a CD by its title 🚧
+// - look up a CD by its title
 func TestLookUpCDByTitle(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New()
+	whse := warehouse.New(nil)
 	newCD := warehouse.NewCD("S&M", "Vertigo Records", 14.99, 42)
 	_, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add CD to warehouse
@@ -85,10 +85,11 @@ func TestLookUpCDByTitle(t *testing.T) {
 	is.Equal(result.GetPrice(), 14.99) // Price of result does not match
 }
 
+// - look up a CD by its title then return `warehouse.ErrCDNotFound` when CD not found.
 func TestLookUpCDByTitleIsNotFound(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New()
+	whse := warehouse.New(nil)
 	newCD := warehouse.NewCD("S&M", "Vertigo Records", 14.99, 42)
 	_, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add CD to warehouse
