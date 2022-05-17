@@ -7,13 +7,19 @@ import "errors"
 type cdUID string
 
 type CD struct {
-	/*title, artist,*/ label string
-	i                        StockedItem
+	title, label string
+	i            stockedItem
 }
 
-type StockedItem struct {
+type stockedItem struct {
 	price float64
 	stock uint
+}
+
+type WarehouseReceipt struct {
+	Title string
+	Price float64
+	Stock uint
 }
 
 type Warehouse struct {
@@ -21,7 +27,10 @@ type Warehouse struct {
 	stock map[cdUID]*CD
 }
 
-var ErrCDNotFound = errors.New("CD does not exist")
+var (
+	ErrCDNotFound           = errors.New("CD does not exist")
+	ErrCDAlreadyInWarehouse = errors.New("a CD with this ID is already in the warehouse")
+)
 
 func New() *Warehouse {
 	return &Warehouse{
@@ -30,33 +39,41 @@ func New() *Warehouse {
 	}
 }
 
-func (w *Warehouse) Add(cd CD) error {
-	return nil
+func (w *Warehouse) Add(cd CD) (cdUID, error) {
+	newID := newCDUID(cd)
+
+	if _, exists := w.stock[newID]; exists {
+		return "", ErrCDAlreadyInWarehouse
+	}
+
+	w.stock[newID] = &cd
+
+	return newID, nil
 }
 
-func (w *Warehouse) NewCD( /*title, artist,*/ label string, price float64, stock uint) cdUID {
-	newID := newCDUID()
-
-	w.stock[newID] = &CD{
-		// title:  title,
-		// artist: artist,
+func NewCD(title, label string, price float64, stock uint) CD {
+	return CD{
+		title: title,
 		label: label,
-		i: StockedItem{
+		i: stockedItem{
 			price: price,
 			stock: stock,
 		},
 	}
-
-	return newID
 }
 
-func (w *Warehouse) NewStockedItem(price float64, amount uint) StockedItem {
-	return StockedItem{price: price, stock: amount}
+func (w *Warehouse) NewStockedItem(price float64, amount uint) stockedItem {
+	return stockedItem{price: price, stock: amount}
 }
 
-func (w *Warehouse) BatchReceipt(label string, si ...StockedItem) error {
-	for _, item := range si {
-		w.NewCD(label, item.price, item.stock)
+func (w *Warehouse) BatchReceipt(label string, wr ...WarehouseReceipt) error {
+	for _, item := range wr {
+		cd := NewCD(item.Title, label, item.Price, item.Stock)
+
+		_, err := w.Add(cd)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -85,6 +102,10 @@ func (w *Warehouse) SellSingleCD(id cdUID) error {
 	return w.SellCD(id, 1)
 }
 
-func newCDUID() cdUID {
-	return "asdf"
+func newCDUID(cd CD) cdUID {
+	return cdUID(cd.label + "|" + cd.title)
+}
+
+func (w *Warehouse) FindCDByTitle(title string) (CD, error) {
+	return CD{}, nil
 }

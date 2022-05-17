@@ -19,10 +19,12 @@ func TestSellSingleCDWhenStockIsGreaterThanZero(t *testing.T) {
 
 	// Arrange
 	whse := warehouse.New()
-	newID := whse.NewCD( /*"S&M", "Metallica",*/ "Vertigo Records", 14.99, startingCount)
+	newCD := warehouse.NewCD("S&M", "Vertigo Records", 14.99, startingCount)
+	newID, err := whse.Add(newCD)
+	is.NoErr(err) // Could not add new CD to warehouse
 
 	// Act
-	err := whse.SellSingleCD(newID)
+	err = whse.SellSingleCD(newID)
 
 	// Assert
 	is.NoErr(err) // Could not sell single CD
@@ -56,9 +58,9 @@ func TestBatchReceiptFromRecordLabel(t *testing.T) {
 
 	// Act
 	err := whse.BatchReceipt("Vertigo Records",
-		whse.NewStockedItem(10.0, 3),
-		whse.NewStockedItem(12.0, 4),
-		whse.NewStockedItem(12.5, 5),
+		warehouse.WarehouseReceipt{"One", 10.0, 3},
+		warehouse.WarehouseReceipt{"Two", 12.0, 4},
+		warehouse.WarehouseReceipt{"Three", 12.5, 5},
 	)
 
 	// Assert
