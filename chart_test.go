@@ -39,13 +39,3 @@ func TestChartIsNotifiedOfSale(t *testing.T) {
 
 	is.NoErr(whse.SellSingleCD(newID)) // Could not sell single CD
 }
-
-// We offer a price guarantee for albums that are in the Top 100. We guarantee to beat the lowest competitor’s price by £1.
-
-func TestChartGuaranteesLowestPrice(t *testing.T) {
-	is := is.New(t)
-	ctrl := gomock.NewController(t)
-	m := NewMockChart(ctrl)
-
-	_, _ = is, m
-}
