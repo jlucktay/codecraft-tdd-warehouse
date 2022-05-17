@@ -18,7 +18,7 @@ func TestSellSingleCDWhenStockIsGreaterThanZero(t *testing.T) {
 	)
 
 	// Arrange
-	whse := warehouse.New(&StubChart{})
+	whse := warehouse.New(&StubChart{}, &dummyPayments{})
 	newCD := warehouse.NewCD("Metallica", "S&M", "Vertigo Records", 14.99, startingCount)
 	newID, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add new CD to warehouse
@@ -41,7 +41,7 @@ func TestSellCDThatDoesNotExist(t *testing.T) {
 	)
 
 	// Arrange
-	whse := warehouse.New(nil)
+	whse := warehouse.New(nil, &dummyPayments{})
 
 	// Act
 	err := whse.SellSingleCD(dummyID)
@@ -54,7 +54,7 @@ func TestSellCDThatDoesNotExist(t *testing.T) {
 func TestBatchReceiptFromRecordLabel(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New(nil)
+	whse := warehouse.New(nil, &dummyPayments{})
 
 	// Act
 	err := whse.BatchReceipt("Vertigo Records",
@@ -71,7 +71,7 @@ func TestBatchReceiptFromRecordLabel(t *testing.T) {
 func TestLookUpCDByTitle(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New(nil)
+	whse := warehouse.New(nil, &dummyPayments{})
 	newCD := warehouse.NewCD("Metallica", "S&M", "Vertigo Records", 14.99, 42)
 	_, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add CD to warehouse
@@ -89,7 +89,7 @@ func TestLookUpCDByTitle(t *testing.T) {
 func TestLookUpCDByTitleIsNotFound(t *testing.T) {
 	// Arrange
 	is := is.New(t)
-	whse := warehouse.New(nil)
+	whse := warehouse.New(nil, &dummyPayments{})
 	newCD := warehouse.NewCD("Metallica", "S&M", "Vertigo Records", 14.99, 42)
 	_, err := whse.Add(newCD)
 	is.NoErr(err) // Could not add CD to warehouse

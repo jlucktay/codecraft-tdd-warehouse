@@ -31,7 +31,7 @@ func TestChartIsNotifiedOfSale(t *testing.T) {
 		Notify(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return()
 
-	whse := warehouse.New(m)
+	whse := warehouse.New(m, &dummyPayments{})
 	newCD := warehouse.NewCD("Metallica", "title string", "label string", 42.0, 27)
 
 	newID, err := whse.Add(newCD)

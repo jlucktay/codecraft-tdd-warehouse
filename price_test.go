@@ -12,4 +12,8 @@ func TestChartGuaranteesLowestPrice(t *testing.T) {
 	is := is.New(t)
 
 	_ = is
+
+	// Arrange
+	// Act
+	// Assert
 }
