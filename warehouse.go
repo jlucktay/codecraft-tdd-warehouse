@@ -7,9 +7,13 @@ import "errors"
 type cdUID string
 
 type CD struct {
-	title, artist, label string
-	price                float64
-	stock                uint
+	/*title, artist,*/ label string
+	i                        StockedItem
+}
+
+type StockedItem struct {
+	price float64
+	stock uint
 }
 
 type Warehouse struct {
@@ -30,22 +34,36 @@ func (w *Warehouse) Add(cd CD) error {
 	return nil
 }
 
-func (w *Warehouse) NewCD(title, artist, label string, price float64, stock uint) cdUID {
+func (w *Warehouse) NewCD( /*title, artist,*/ label string, price float64, stock uint) cdUID {
 	newID := newCDUID()
 
 	w.stock[newID] = &CD{
-		title:  title,
-		artist: artist,
-		label:  label,
-		price:  price,
-		stock:  stock,
+		// title:  title,
+		// artist: artist,
+		label: label,
+		i: StockedItem{
+			price: price,
+			stock: stock,
+		},
 	}
 
 	return newID
 }
 
+func (w *Warehouse) NewStockedItem(price float64, amount uint) StockedItem {
+	return StockedItem{price: price, stock: amount}
+}
+
+func (w *Warehouse) BatchReceipt(label string, si ...StockedItem) error {
+	for _, item := range si {
+		w.NewCD(label, item.price, item.stock)
+	}
+
+	return nil
+}
+
 func (w *Warehouse) QueryStockLevel(id cdUID) uint {
-	return w.stock[id].stock
+	return w.stock[id].i.stock
 }
 
 func (w *Warehouse) SellCD(id cdUID, qty uint) error {
@@ -54,11 +72,11 @@ func (w *Warehouse) SellCD(id cdUID, qty uint) error {
 		return ErrCDNotFound
 	}
 
-	if err := w.p.Sell(selling.price * float64(qty)); err != nil {
+	if err := w.p.Sell(selling.i.price * float64(qty)); err != nil {
 		return err
 	}
 
-	selling.stock -= qty
+	selling.i.stock -= qty
 
 	return nil
 }

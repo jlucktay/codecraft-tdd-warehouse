@@ -5,7 +5,7 @@ import (
 
 	"github.com/matryer/is"
 
-	warehouse "go.jlucktay.dev/tdd-cd-warehouse"
+	warehouse "go.jlucktay.dev/codecraft-tdd-warehouse"
 )
 
 // - sell a single CD to a customer and take payment
@@ -19,7 +19,7 @@ func TestSellSingleCDWhenStockIsGreaterThanZero(t *testing.T) {
 
 	// Arrange
 	whse := warehouse.New()
-	newID := whse.NewCD("S&M", "Metallica", "Vertigo Records", 14.99, startingCount)
+	newID := whse.NewCD( /*"S&M", "Metallica",*/ "Vertigo Records", 14.99, startingCount)
 
 	// Act
 	err := whse.SellSingleCD(newID)
@@ -45,6 +45,24 @@ func TestSellCDThatDoesNotExist(t *testing.T) {
 	err := whse.SellSingleCD(dummyID)
 
 	// Assert
-	is.True(err != nil)
-	is.Equal(err, warehouse.ErrCDNotFound)
+	is.Equal(err, warehouse.ErrCDNotFound) // Should receive specific error
 }
+
+// - batch receipt of CD stock from record label into warehouse
+func TestBatchReceiptFromRecordLabel(t *testing.T) {
+	// Arrange
+	is := is.New(t)
+	whse := warehouse.New()
+
+	// Act
+	err := whse.BatchReceipt("Vertigo Records",
+		whse.NewStockedItem(10.0, 3),
+		whse.NewStockedItem(12.0, 4),
+		whse.NewStockedItem(12.5, 5),
+	)
+
+	// Assert
+	is.NoErr(err)
+}
+
+// - look up a CD by its title 🚧

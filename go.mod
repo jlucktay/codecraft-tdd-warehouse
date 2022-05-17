@@ -1,4 +1,4 @@
-module go.jlucktay.dev/tdd-cd-warehouse
+module go.jlucktay.dev/codecraft-tdd-warehouse
 
 go 1.17
 
