@@ -15,6 +15,12 @@ func (sc *StubChart) Notify(artist string, title string, copies uint) {
 	fmt.Println("stub chart notified")
 }
 
+type StubPriceGuarantor struct{}
+
+func (spg *StubPriceGuarantor) BestPrice(artist, title string) (price float64, err error) {
+	return 42.0, nil
+}
+
 func TestChartIsNotifiedOfSale(t *testing.T) {
 	is := is.New(t)
 	ctrl := gomock.NewController(t)
@@ -32,4 +38,14 @@ func TestChartIsNotifiedOfSale(t *testing.T) {
 	is.NoErr(err) // Could not add new CD to warehouse
 
 	is.NoErr(whse.SellSingleCD(newID)) // Could not sell single CD
+}
+
+// We offer a price guarantee for albums that are in the Top 100. We guarantee to beat the lowest competitor’s price by £1.
+
+func TestChartGuaranteesLowestPrice(t *testing.T) {
+	is := is.New(t)
+	ctrl := gomock.NewController(t)
+	m := NewMockChart(ctrl)
+
+	_, _ = is, m
 }

@@ -1,4 +1,4 @@
-//go:generate mockgen -source=chart.go -destination=./chart_mock_test.go -package=warehouse_test
+//go:generate mockgen -source=chart.go -destination=./mock_chart_test.go -package=warehouse_test
 
 package warehouse
 
